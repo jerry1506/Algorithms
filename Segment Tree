@@ -1,0 +1,47 @@
+int seg_tree[4*N];     // seg_tree[i] = value at node number i
+void build(int s ,int e, int node_num) // [s..e] is the range of node:- node_num
+{
+    if(s==e) // We reach a leaf node
+    {
+      seg_tree[node_num] = A[s];
+      return;
+    }
+    int m = (s+e)/2; // splitting the current range
+    build(s,m,node_num*2); // building then left subtree
+    build(m+1,e,node_num*2+1); // building the right subtree
+ 
+    // Updating value at current node after building its left and right subtree
+ 
+    seg_tree[node_num] = seg_tree[node_num*2] + seg_tree[node_num*2+1];
+ 
+   return;
+}
+
+int query(int l,int r,int s,int e,int node_num)
+{
+    if(s>r || e=l && e<=r) // the current range is completely inside query range
+      return seg_tree[node_num];   // returning the sum of current range
+    else // the query range is inside the current range
+    {
+      int m = (s+e)/2;  // splitting the current range and querying its children
+      return query(l,r,s,m,node_num*2) + query(l,r,m+1,e,node_num*2+1);
+    }
+}
+
+void point_update(int p, int newval, int s, int e, int node_num)
+{
+   if(s==e)   // We reached the point of update
+   {          // base case of recursion
+     seg_tree[node_num] = newval;   // updating the point
+     return;
+    }
+   int m = (s+e)/2;   // splitting the range 
+   if(p<=m)   // The point lies in the left subtree [l..m]
+     point_update(p,newval,s,m,node_num*2);
+   else       // The pint lies in the right subtree [m+1..r]
+     point_update(p,new_val,m+1,e,node_num*2+1);
+ 
+   // Updating the current node after its children are updated
+   seg_tree[node_num] = seg_tree[node_num*2] + seg_tree[node_num*2+1];
+}
+
